@@ -80,8 +80,8 @@
         @:<input type="hidden" asp-for="@(Model.ModelTypeName).@GetValueExpression(property)" />
             }
         }
-        @:<input type="submit" value="Delete" class="btn btn-danger" /> |
-        @:<a asp-page="./Index">Back to List</a>
+        @:<input type="submit" value="Delete" class="k-button k-primary" /> |
+        @:<a asp-page="./Index" class="k-button">Back to List</a>
     @:</form>
 @:</div>
     if (!Model.IsPartialView && !Model.IsLayoutPageSelected)

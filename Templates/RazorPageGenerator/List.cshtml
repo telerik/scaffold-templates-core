@@ -39,7 +39,7 @@
         //    PushIndent("    ");
     }
 @:<p>
-    @:<a asp-page="Create">Create New</a>
+    @:<a asp-page="Create" class="k-button">Create New</a>
 @:</p>
 @:<table class="table">
     @:<thead>
@@ -89,9 +89,9 @@
         if (pkName != null)
         {
             @:<td>
-                @:<a asp-page="./Edit" asp-route-id="@@item.@pkName">Edit</a> |
-                @:<a asp-page="./Details" asp-route-id="@@item.@pkName">Details</a> |
-                @:<a asp-page="./Delete" asp-route-id="@@item.@pkName">Delete</a>
+                @:<a asp-page="./Edit" asp-route-id="@@item.@pkName" class="k-button k-primary">Edit</a> |
+                @:<a asp-page="./Details" asp-route-id="@@item.@pkName" class="k-button">Details</a> |
+                @:<a asp-page="./Delete" asp-route-id="@@item.@pkName" class="k-button">Delete</a>
             @:</td>
         }
         else
