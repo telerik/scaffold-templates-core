@@ -15,4 +15,6 @@ In order to use the scaffolding provided by Microsoft you can follow these resou
 
 In order to install the scaffold templates from this repository just copy the **Templates** folder and include it in the root of the created project:
 
+![adding templates](https://github.com/telerik/scaffold-templates-core/wiki/2018-11-19_0849.png)
+
 
