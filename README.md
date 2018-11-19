@@ -17,4 +17,21 @@ In order to install the scaffold templates from this repository just copy the **
 
 ![adding templates](https://github.com/telerik/scaffold-templates-core/wiki/2018-11-19_0849.png)
 
+Make sure to exclude the folder from the project so that those files are not compiled. Or you can include the exclude manually in the *.csproj* file:
 
+```xml
+  <ItemGroup>
+    <Compile Remove="Templates\**" />
+    <Content Remove="Templates\**" />
+    <EmbeddedResource Remove="Templates\**" />
+    <None Remove="Templates\**" />
+  </ItemGroup>
+```
+
+Next, using the build-in scaffolding utility will output cshtml generated using the custom templates included. In this case, the inputs generated will be the Telerik UI for ASP.NET Core components corresponding to the type of the field.
+
+* `String`: `input` element with Kendo styles;
+* `String`(multiline): `textarea` element with Kendo styles;
+* `Number`: `kendo-numerictextbox` tag helper;
+* `DateTime`: `kendo-datetimepicker` tag helper;
+* `Boolean`: `Html.Kendo().CheckBoxFor` helper.
