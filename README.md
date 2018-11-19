@@ -23,7 +23,7 @@ In order to install the scaffold templates from this repository just copy the **
 
 ![adding templates](https://github.com/telerik/scaffold-templates-core/wiki/2018-11-19_0849.png)
 
-Make sure to exclude the folder from the project so that those files are not compiled. Or you can include the exclude manually in the *.csproj* file:
+Make sure to exclude the folder from the project so that those files are not compiled. Or you can add the exclude statement manually in the *.csproj* file:
 
 ```xml
   <ItemGroup>
