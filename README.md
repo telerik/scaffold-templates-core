@@ -1,6 +1,6 @@
 # scaffold-templates-core
 
-This repository contains scaffold templates that are alternatives to the native .NET Core templates for web application with MVC and RazorPages.
+This repository contains scaffold templates that are alternatives to the native .NET Core scaffold templates for web application with MVC and RazorPages.
 
 ## Getting Started
 
@@ -12,6 +12,12 @@ In order to use the scaffolding provided by Microsoft you can follow these resou
 - [Add a model to a Razor Pages app in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/razor-pages/model?view=aspnetcore-2.1)
 
 ## Installing the Kendo UI for ASP.NET Core Scaffold templates
+
+> Make sure that Telerik UI for ASP.NET Core is installed and set up in your project.
+>
+> * [Getting Started with VS 2017](https://docs.telerik.com/aspnet-core/getting-started/getting-started)
+> * [Getting Started with CLI](https://docs.telerik.com/aspnet-core/getting-started/getting-started-cli)
+
 
 In order to install the scaffold templates from this repository just copy the **Templates** folder and include it in the root of the created project:
 
