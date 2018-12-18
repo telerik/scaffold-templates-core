@@ -1,4 +1,4 @@
-# scaffold-templates-core
+ # Scaffold Templates for UI for ASP.NET Core
 
 This repository contains scaffold templates that are alternatives to the native .NET Core scaffold templates for web application with MVC and RazorPages.
 
