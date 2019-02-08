@@ -2,19 +2,31 @@
 @using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore
 @using System.Collections.Generic
 @using System.Linq
-@@model @GetEnumerableTypeExpression(Model.ViewDataTypeName)
-
 @{
+    bool debugMode = false;
+    if (debugMode) {
+@: -- Debug Mode Enabled --
+@: Model.ViewName: @Model.ViewName
+@: Model.ViewDataTypeShortName: @Model.ViewDataTypeShortName
+@: Model.ViewDataTypeName: @Model.ViewDataTypeName
+@: Model.ModelMetadata.EntitySetName: @Model.ModelMetadata.EntitySetName 
+@: ControllerName: @ControllerName() 
+@: Model.IsPartialView: @Model.IsPartialView
+@: Model.IsPartialView: @Model.IsPartialView
+@: Model.IsPartialView: @Model.IsPartialView
+@: Model.IsPartialView: @Model.IsPartialView
+    }
+
     if (Model.IsPartialView)
     {
     }
     else if (Model.IsLayoutPageSelected)
     {
 @:@@{
-    @:ViewData["Title"] = "@Model.ViewName";
+@:     ViewData["Title"] = "@Model.ViewName";
         if (!string.IsNullOrEmpty(Model.LayoutPageFile))
         {
-    @:Layout = "@Model.LayoutPageFile";
+@:     Layout = "@Model.LayoutPageFile";
         }
 @:}
 @:
@@ -24,25 +36,34 @@
     else
     {
 @:@@{
-    @:Layout = null;
+@:Layout = null;
 @:}
 @:
 @:<!DOCTYPE html>
 @:
 @:<html>
 @:<head>
-    @:<meta name="viewport" content="width=device-width" />
-    @:<title>@Model.ViewName</title>
+@:<meta name="viewport" content="width=device-width" />
+@:<title>@Model.ViewName</title>
 @:</head>
 @:<body>
-        //    PushIndent("    ");
+    //    PushIndent("    ");
     }
-@:<p>
-    @:<a asp-action="Create" class="k-button">Create New</a>
-@:</p>
-@:<table class="table">
-    @:<thead>
-        @:<tr>
+@: @@*    
+@: // The following code enables the grid's datasource. 
+@: // Copy the code below to your controller.
+@: // Controller Code
+@: // GET: @ControllerName()
+@: public IActionResult @(Model.ViewName)() => View();
+@: public async Task<IActionResult> @(ControllerName())_Read([DataSourceRequest]DataSourceRequest request)
+@: {
+@:     return Json(await _context.@(ControllerName()).ToDataSourceResultAsync(request));
+@: }
+@: // End of Controller Code
+@: *@@
+@: <kendo-grid name="@(ControllerName())Grid" height="550" on-change="handleChange" selectable="true">
+    @:<columns>
+    // Template for columns
         Dictionary<string, IPropertyMetadata> propertyLookup = ((IModelMetadata)Model.ModelMetadata).Properties.ToDictionary(x => x.PropertyName, x => x);
         Dictionary<string, INavigationMetadata> navigationLookup = ((IModelMetadata)Model.ModelMetadata).Navigations.ToDictionary(x => x.AssociationPropertyName, x => x);
 
@@ -51,68 +72,104 @@
             if (propertyLookup.TryGetValue(item.Name, out IPropertyMetadata property)
                 && property.Scaffold && !property.IsForeignKey && !property.IsPrimaryKey)
             {
-            <th>
-                @@Html.DisplayNameFor(model => model.@GetValueExpression(property))
-            </th>
+    @: <column field="@GetValueExpression(property)" title="@GetValueExpression(property)" />
             }
             else if (navigationLookup.TryGetValue(item.Name, out INavigationMetadata navigation))
             {
-            <th>
-                @@Html.DisplayNameFor(model => model.@GetValueExpression(navigation))
-            </th>
+    @: <column field="@GetValueExpression(navigation)" title="@GetValueExpression(navigation).@navigation.DisplayPropertyName)" />
             }
         }
-            @:<th></th>
-        @:</tr>
-    @:</thead>
-    @:<tbody>
-@:@@foreach (var item in Model) {
-        @:<tr>
-        foreach (var item in Model.ModelMetadata.ModelType.GetProperties())
-        {
-            if (propertyLookup.TryGetValue(item.Name, out IPropertyMetadata property)
-                && property.Scaffold && !property.IsForeignKey && !property.IsPrimaryKey)
-            {
-            <td>
-                @@Html.DisplayFor(modelItem => item.@GetValueExpression(property))
-            </td>
-            }
-            else if (navigationLookup.TryGetValue(item.Name, out INavigationMetadata navigation))
-            {
-            <td>
-                @@Html.DisplayFor(modelItem => item.@GetValueExpression(navigation).@navigation.DisplayPropertyName)
-            </td>
-            }
-        }
-        string pkName = GetPrimaryKeyName();
-        if (pkName != null)
-        {
-            @:<td>
-                @:<a asp-action="Edit" asp-route-id="@@item.@pkName" class="k-button k-primary">Edit</a> |
-                @:<a asp-action="Details" asp-route-id="@@item.@pkName" class="k-button">Details</a> |
-                @:<a asp-action="Delete" asp-route-id="@@item.@pkName" class="k-button">Delete</a>
-            @:</td>
-        }
-        else
-        {
-            <td>
-                @@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @@Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @@Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        }
-        @:</tr>
-@:}
-    @:</tbody>
-
-@:</table>
-    if(!Model.IsPartialView && !Model.IsLayoutPageSelected)
+    @:</columns>
+    @:<toolbar>
+    @:    <toolbar-button name="excel"/>
+    @:    <toolbar-button name="pdf"/>
+    @:    <toolbar-button name="create" template="tbCreate"/>
+    @:    <toolbar-button name="edit" template="tbEdit"/>
+    @:    <toolbar-button name="details" template="tbDetails"/>
+    @:    <toolbar-button name="delete" template="tbDelete"/>
+    @:</toolbar>
+    @:<excel all-pages="true" />
+    @:<groupable enabled="true" />
+    @:<sortable enabled="true" />
+    @:<pageable button-count="5" refresh="true" />
+    @:<filterable enabled="true" />
+    @:<datasource type="DataSourceTagHelperType.Ajax" page-size="20">
+    @:    <schema>
+    @:        <model>
+    @:            <fields>
+                    // Template for fields
+                    foreach (var item in Model.ModelMetadata.ModelType.GetProperties())
+                    {
+                        if (propertyLookup.TryGetValue(item.Name, out IPropertyMetadata property)
+                            && property.Scaffold && !property.IsForeignKey && !property.IsPrimaryKey)
+                        {
+                 @: <field name="@GetValueExpression(property)" type="@GetFieldDataType(property)" />
+                        }
+                        else if (navigationLookup.TryGetValue(item.Name, out INavigationMetadata navigation))
+                        {
+                 @: <field name="@GetValueExpression(navigation)" title="@GetFieldDataType(property)" />
+                        }
+                    }
+    @:            </fields>
+    @:        </model>
+    @:    </schema>
+    @:    <transport>
+    @:        <read url="@@Url.Action("@(ControllerName())_Read", "@ControllerName()" )" />
+    @:    </transport>
+    @:</datasource>
+@: </kendo-grid>
+    if (Model.IsPartialView)
+    {
+        @: <!-- Move this script to the Scripts section of the page -->
+    }
+@: <script>
+@:     function tbCreate(data) {
+@:         return `<a id='tbCreate' href='@(ControllerName())/create' class='k-button'>Create</a>`;
+@:     };
+@:     function tbDetails(data) {
+@:         return `<a id='tbDetails'>Details</a>`;
+@:     };
+@:     function tbEdit(data) {
+@:         return `<a id='tbEdit'>Edit</a>`;
+@:     };
+@:     function tbDelete(data) {
+@:         return `<a id='tbDelete'>Delete</a>`;
+@:     };
+@:     function handleChange(args) {
+@:         let enabled = this.select().length != 0;
+@:         toolBar.edit.enable(enabled);
+@:         toolBar.details.enable(enabled);
+@:         toolBar.del.enable(enabled);
+@:         if (enabled) {
+@:              let selectedId = this.dataItem(this.select()).OrderID;
+@:              toolBar.edit.wrapper.attr("href", `@(ControllerName())/edit/${selectedId}`);
+@:              toolBar.details.wrapper.attr("href", `@(ControllerName())/details/${selectedId}`);
+@:              toolBar.del.wrapper.attr("href", `@(ControllerName())/delete/${selectedId}`);
+@:          } else {
+@:              toolBar.edit.wrapper.attr("href", "#");
+@:              toolBar.details.wrapper.attr("href", "#");
+@:              toolBar.details.wrapper.attr("href", "#");
+@:          }
+@:     };
+@:    let toolBar;
+@:         $(function () {
+@:             // references to UI elements
+@:             toolBar = {
+@:                  create: $("#tbCreate").kendoButton().data("kendoButton"),
+@:                  edit: $("#tbEdit").kendoButton({ enable: false }).data("kendoButton"),
+@:                  details: $("#tbDetails").kendoButton({ enable: false }).data("kendoButton"),
+@:                  del: $("#tbDelete").kendoButton({ enable: false }).data("kendoButton")
+@:             };
+@:        });
+@: </script>
+if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
     {
         //ClearIndent();
-@:</body>
-@:</html>
+        @:</body>
+        @:</html>
     }
 }
+// Code for template
 @functions
 {
     string GetPrimaryKeyName()
@@ -127,6 +184,40 @@
         return property.PropertyName;
     }
 
+    bool IsNumericType(IPropertyMetadata property)
+    {
+        switch (GetUnderlyingType(property))
+        {
+            case "System.Byte":
+            case "System.SByte":
+            case "System.UInt16":
+            case "System.UInt32":
+            case "System.UInt64":
+            case "System.Int16":
+            case "System.Int32":
+            case "System.Int64":
+            case "System.Decimal":
+            case "System.Double":
+            case "System.Single":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    bool IsDateType(IPropertyMetadata property) =>
+        GetUnderlyingType(property) == "System.DateTime";
+
+    string GetFieldDataType(IPropertyMetadata property) =>
+    IsNumericType(property) ? "number" :
+    IsDateType(property) ? "date" :
+    "string";
+
+    string GetUnderlyingType(IPropertyMetadata p)
+    {
+        return p.TypeName.Contains("Nullable") ? Nullable.GetUnderlyingType(Type.GetType(p.TypeName)).ToString() : p.TypeName;
+    }
+
     string GetValueExpression(INavigationMetadata navigation)
     {
         return navigation.AssociationPropertyName;
@@ -136,4 +227,7 @@
     {
         return "IEnumerable<" + typeName + ">";
     }
+
+    //Best guess for controller name
+    string ControllerName() => Model.ModelMetadata.EntitySetName;
 }
