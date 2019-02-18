@@ -49,18 +49,6 @@
 @:<body>
     //    PushIndent("    ");
     }
-@: @@*    
-@: // The following code enables the grid's datasource. 
-@: // Copy the code below to your controller.
-@: // Controller Code
-@: // GET: @ControllerName()
-@: public IActionResult @(Model.ViewName)() => View();
-@: public async Task<IActionResult> @(ControllerName())_Read([DataSourceRequest]DataSourceRequest request)
-@: {
-@:     return Json(await _context.@(ControllerName()).ToDataSourceResultAsync(request));
-@: }
-@: // End of Controller Code
-@: *@@
 @: <kendo-grid name="@(ControllerName())Grid" height="550" on-change="handleChange" selectable="true">
     @:<columns>
     // Template for columns
