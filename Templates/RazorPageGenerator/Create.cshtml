@@ -60,7 +60,7 @@
             }
 
             bool isCheckbox = property.TypeName.Equals("System.Boolean");
-            bool isDatetime = property.TypeName.Equals("System.DateTime");
+            bool isDatetime = property.TypeName.Contains("System.DateTime");
             if (isCheckbox)
             {
                 @:<div class="form-group">
@@ -157,22 +157,20 @@
 
     bool IsNumericType(IPropertyMetadata property)
     {
-        switch (property.TypeName)
-        {
-            case "System.Byte":
-            case "System.SByte":
-            case "System.UInt16":
-            case "System.UInt32":
-            case "System.UInt64":
-            case "System.Int16":
-            case "System.Int32":
-            case "System.Int64":
-            case "System.Decimal":
-            case "System.Double":
-            case "System.Single":
-                return true;
-            default:
-                return false;
-        }
+        var types = new [] {
+            "System.Byte",
+            "System.SByte",
+            "System.UInt16",
+            "System.UInt32",
+            "System.UInt64",
+            "System.Int16",
+            "System.Int32",
+            "System.Int64",
+            "System.Decimal",
+            "System.Double",
+            "System.Single"
+        };
+
+        return types.Any(property.TypeName.Contains);
     }
 }
