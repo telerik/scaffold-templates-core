@@ -15,6 +15,10 @@
 @: Model.IsPartialView: @Model.IsPartialView
 @: Model.IsPartialView: @Model.IsPartialView
 @: Model.IsPartialView: @Model.IsPartialView
+foreach (var property in Model.GetType().GetProperties())
+        {
+    @: @property
+        }
     }
 
     if (Model.IsPartialView)
@@ -102,7 +106,7 @@
     @:        </model>
     @:    </schema>
     @:    <transport>
-    @:        <read url="@@Url.Action("@(ControllerName())_Read", "@ControllerName()" )" />
+    @:        <read url="@@Url.Action("@(ControllerName())_Read")" />
     @:    </transport>
     @:</datasource>
 @: </kendo-grid>
@@ -112,7 +116,7 @@
     }
 @: <script>
 @:     function tbCreate(data) {
-@:         return `<a id='tbCreate' href='@(ControllerName())/create' class='k-button'>Create</a>`;
+@:         return `<a id='tbCreate' href='${location.pathname}/create' class='k-button'>Create</a>`;
 @:     };
 @:     function tbDetails(data) {
 @:         return `<a id='tbDetails'>Details</a>`;
@@ -130,9 +134,9 @@
 @:         toolBar.del.enable(enabled);
 @:         if (enabled) {
 @:              let selectedId = this.dataItem(this.select()).OrderID;
-@:              toolBar.edit.wrapper.attr("href", `@(ControllerName())/edit/${selectedId}`);
-@:              toolBar.details.wrapper.attr("href", `@(ControllerName())/details/${selectedId}`);
-@:              toolBar.del.wrapper.attr("href", `@(ControllerName())/delete/${selectedId}`);
+@:              toolBar.edit.wrapper.attr("href", `${location.pathname}/edit/${selectedId}`);
+@:              toolBar.details.wrapper.attr("href", `${location.pathname}/details/${selectedId}`);
+@:              toolBar.del.wrapper.attr("href", `${location.pathname}/delete/${selectedId}`);
 @:          } else {
 @:              toolBar.edit.wrapper.attr("href", "#");
 @:              toolBar.details.wrapper.attr("href", "#");
@@ -157,7 +161,7 @@ if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
         @:</html>
     }
 }
-// Code for template
+@*Code for template*@
 @functions
 {
     string GetPrimaryKeyName()

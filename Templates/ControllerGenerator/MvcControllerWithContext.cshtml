@@ -82,7 +82,7 @@ namespace @Model.ControllerNamespace
         // The Grid will asyc call the @(routePrefix)_Read action on page load
 @{
         @:public IActionResult Index() => View();
-        @:public async Task<IActionResult> @(routePrefix)_Read([DataSourceRequest]DataSourceRequest request)
+        @:public async Task<IActionResult> @(entitySetName)_Read([DataSourceRequest]DataSourceRequest request)
         @:{
     var includeExpressions = "";
     includeExpressions = String.Join("", relatedProperties
