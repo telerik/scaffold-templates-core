@@ -4,7 +4,15 @@
 @using System.Linq
 @@model @Model.ViewDataTypeName
 
+
+
 @{
+    bool debugMode = false;
+    if (debugMode) {
+@: -- Debug Mode Enabled --
+@: -- Bootstrap 4 template --
+    }
+
     if (Model.IsPartialView)
     {
     }
@@ -33,130 +41,113 @@
 @:<head>
     @:<meta name="viewport" content="width=device-width" />
     @:<title>@Model.ViewName</title>
-    @:</head>
+@:</head>
 @:<body>
-    @:
-    //    PushIndent("    ");
+@:
+        //    PushIndent("    ");
     }
-    @:<h4>@Model.ViewDataTypeShortName</h4>
-    @:<hr />
-    @:<div class="row">
-        @:<div class="col-md-4">
-            string formId = Model.ViewDataTypeShortName + "Form";
-            @:<form asp-action="@Model.ViewName" id="@formId">
-                @:<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                foreach (PropertyMetadata property in Model.ModelMetadata.Properties)
-                {
-                if (property.IsPrimaryKey)
-                {
-                @:<input type="hidden" asp-for="@property.PropertyName" />
+@:<h4>@Model.ViewDataTypeShortName</h4>
+@:<hr />
+@:<div class="row">
+    @:<div class="col-md-4">
+        @:<form asp-action="@Model.ViewName">
+            @:<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        foreach (PropertyMetadata property in Model.ModelMetadata.Properties)
+        {
+            if (property.IsPrimaryKey)
+            {
+            @:<input type="hidden" asp-for="@property.PropertyName" />
                 continue;
-                }
+            }
 
-                if (property.Scaffold)
-                {
+            if (property.Scaffold)
+            {
                 if (property.IsReadOnly)
                 {
-                continue;
+                    continue;
                 }
 
                 if (property.IsForeignKey)
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName" class="control-label"></label>
-                    @:<select asp-for="@property.PropertyName" class="form-control" asp-items="ViewBag.@property.PropertyName"></select>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
-                    @:
-                @:</div>
-                continue;
+            @:<div class="form-group">
+                @:<label asp-for="@property.PropertyName" class="control-label"></label>
+                @:<select asp-for="@property.PropertyName" class="form-control" asp-items="ViewBag.@property.PropertyName"></select>
+                @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
+            @:</div>
+                    continue;
                 }
 
-                bool isCheckbox = property.TypeName.Equals("System.Boolean");
-                bool isDatetime = property.TypeName.Equals("System.DateTime");
-                if (isCheckbox)
+                if (IsCheckbox(property))
                 {
-                @:<div class="form-group">
-                    @:@@Html.Kendo().CheckBoxFor(m => m.@property.PropertyName)
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+            @:<div class="form-group form-check">
+                @:<label class="form-check-label">
+                    @:<input class="form-check-input" asp-for="@property.PropertyName" /> @@Html.DisplayNameFor(model => model.@GetValueExpression(property))
+                @:</label>
+            @:</div>
                 }
-                else if (isDatetime)
+                else if (IsSelect(property))
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<kendo-datetimepicker for="@property.PropertyName" />
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                 @:</div>
-                }
-                else if (IsNumericType(property))
-                {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<kendo-numerictextbox for="@property.PropertyName" />
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
-                }
-                else if (property.IsEnum && !property.IsEnumFlags)
-                {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<select asp-for="@property.PropertyName"></select>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+            @:<div class="form-group">
+                @:<label asp-for="@property.PropertyName" class="control-label"></label>
+                @:<select asp-for="@property.PropertyName" class="form-control"></select>
+                @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
+            @:</div>
                 }
                 else if (property.IsMultilineText)
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<textarea asp-for="@property.PropertyName" class="k-textbox"></textarea>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+            @:<div class="form-group">
+                @:<label asp-for="@property.PropertyName" class="control-label"></label>
+                @:<textarea asp-for="@property.PropertyName" class="form-control"></textarea>
+                @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
+            @:</div>
                 }
-                else
+                else if (IsDateType(property))
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<input asp-for="@property.PropertyName" class="k-textbox" />
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
-                }
-                }
-                // Ideally we shouldn't be here  but if the user marks the foreign key as [ScaffoldColumn(false)], we want to atleast try to make it work.
-                else if (property.IsForeignKey)
+            @:<div class="form-group">
+                @:<label>Date!!</label>
+                @:<label asp-for="@property.PropertyName" class="control-label"></label>
+                @:<textarea asp-for="@property.PropertyName" class="form-control"></textarea>
+                @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
+            @:</div>
+                } else
                 {
-                @:<input type="hidden" asp-for="@property.PropertyName" />
+            @:<div class="form-group">
+                @:<label asp-for="@property.PropertyName" class="control-label"></label>
+                @:<input asp-for="@property.PropertyName" class="form-control" />
+                @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
+            @:</div>
+                }
+            }
+            // Ideally we shouldn't be here  but if the user marks the foreign key as [ScaffoldColumn(false)], we want to atleast try to make it work.
+            else if (property.IsForeignKey)
+            {
+        @:<input type="hidden" asp-for="@property.PropertyName" />
                 continue;
-                }
-                }
-                }
-                <div class="form-group">
-                    <input type="submit" value="Save" class="k-button k-primary" />
-                </div>
-            </form>
-        </div>
+            }
+        }
+    }
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
+</div>
 
-    <div>
-        <a asp-action="Index" class="k-button">Back to List</a>
-    </div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 
-    @{
+@{
     if (Model.ReferenceScriptLibraries)
     {
-    @:<script>
-        @:$(document).ready(function () {
-            @:$("#@formId").kendoValidator({
-                @:// You can define your custom rules here:
-                @://rules: {}
-            @:});
-        @:})
-    @:</script>
+@:@@section Scripts {
+    @:@@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@:}
     }
     // The following code closes the tag used in the case of a view using a layout page and the body and html tags in the case of a regular view page
     if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
     {
-    @:</body>
+@:</body>
 @:</html>
     }
 }
@@ -173,24 +164,10 @@
         return property.PropertyName;
     }
 
-    bool IsNumericType(IPropertyMetadata property)
-    {
-        switch (property.TypeName)
-        {
-            case "System.Byte":
-            case "System.SByte":
-            case "System.UInt16":
-            case "System.UInt32":
-            case "System.UInt64":
-            case "System.Int16":
-            case "System.Int32":
-            case "System.Int64":
-            case "System.Decimal":
-            case "System.Double":
-            case "System.Single":
-                return true;
-            default:
-                return false;
-        }
-    }
+    bool IsCheckbox(IPropertyMetadata p) => p.TypeName.Equals("System.Boolean");
+    bool IsSelect(IPropertyMetadata p) => p.IsEnum && !p.IsEnumFlags;
+    bool IsDateType(IPropertyMetadata p) =>
+        GetUnderlyingType(property) == "System.DateTime";
+
+    string GetUnderlyingType(IPropertyMetadata p) => p.TypeName.Contains("Nullable") ? Nullable.GetUnderlyingType(Type.GetType(p.TypeName)).ToString() : p.TypeName;
 }
