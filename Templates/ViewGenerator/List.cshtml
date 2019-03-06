@@ -164,61 +164,44 @@ if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
 @*Code for template*@
 @functions
 {
-    string GetPrimaryKeyName()
-    {
-        return (Model.ModelMetadata.PrimaryKeys != null && Model.ModelMetadata.PrimaryKeys.Length == 1)
+    string GetPrimaryKeyName() =>
+        (Model.ModelMetadata.PrimaryKeys != null && Model.ModelMetadata.PrimaryKeys.Length == 1)
         ? Model.ModelMetadata.PrimaryKeys[0].PropertyName
         : null;
-    }
 
-    string GetValueExpression(IPropertyMetadata property)
-    {
-        return property.PropertyName;
-    }
+    string GetValueExpression(IPropertyMetadata property) => property.PropertyName;
+    
+    string GetValueExpression(INavigationMetadata navigation) => navigation.AssociationPropertyName;
+    
+    string GetEnumerableTypeExpression(string typeName) => "IEnumerable<" + typeName + ">";
 
     bool IsNumericType(IPropertyMetadata property)
-    {
-        switch (GetUnderlyingType(property))
         {
-            case "System.Byte":
-            case "System.SByte":
-            case "System.UInt16":
-            case "System.UInt32":
-            case "System.UInt64":
-            case "System.Int16":
-            case "System.Int32":
-            case "System.Int64":
-            case "System.Decimal":
-            case "System.Double":
-            case "System.Single":
-                return true;
-            default:
-                return false;
-        }
-    }
+            var types = new [] {
+                "System.Byte",
+                "System.SByte",
+                "System.UInt16",
+                "System.UInt32",
+                "System.UInt64",
+                "System.Int16",
+                "System.Int32",
+                "System.Int64",
+                "System.Decimal",
+                "System.Double",
+                "System.Single"
+            };
 
-    bool IsDateType(IPropertyMetadata property) =>
-        GetUnderlyingType(property) == "System.DateTime";
+            return types.Any(property.TypeName.Contains);
+        }
+
+    bool IsCheckbox(IPropertyMetadata p) => p.TypeName.Contains("System.Boolean");
+    bool IsSelect(IPropertyMetadata p) => p.IsEnum && !p.IsEnumFlags;
+    bool IsDate(IPropertyMetadata p) => p.TypeName.Contains("System.DateTime");
 
     string GetFieldDataType(IPropertyMetadata property) =>
-    IsNumericType(property) ? "number" :
-    IsDateType(property) ? "date" :
-    "string";
-
-    string GetUnderlyingType(IPropertyMetadata p)
-    {
-        return p.TypeName.Contains("Nullable") ? Nullable.GetUnderlyingType(Type.GetType(p.TypeName)).ToString() : p.TypeName;
-    }
-
-    string GetValueExpression(INavigationMetadata navigation)
-    {
-        return navigation.AssociationPropertyName;
-    }
-
-    string GetEnumerableTypeExpression(string typeName)
-    {
-        return "IEnumerable<" + typeName + ">";
-    }
+        IsNumericType(property) ? "number" :
+        IsDate(property) ? "date" :
+        "string";
 
     //Best guess for controller name
     string ControllerName() => Model.ModelMetadata.EntitySetName;

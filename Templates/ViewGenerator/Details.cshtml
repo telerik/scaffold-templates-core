@@ -3,7 +3,7 @@
 @using System.Collections.Generic
 @using System.Linq
 @@model @Model.ViewDataTypeName
-b4
+
 @{
     if (Model.IsPartialView)
     {
@@ -42,7 +42,9 @@ b4
 <div>
     <h4>@Model.ViewDataTypeShortName</h4>
     <hr />
-    <dl class="row">
+    <div class="row">
+    <div class="col-md-6">
+    <dl>
 @{
     Dictionary<string, IPropertyMetadata> propertyLookup = ((IModelMetadata)Model.ModelMetadata).Properties.ToDictionary(x => x.PropertyName, x => x);
     Dictionary<string, INavigationMetadata> navigationLookup = ((IModelMetadata)Model.ModelMetadata).Navigations.ToDictionary(x => x.AssociationPropertyName, x => x);
@@ -52,39 +54,44 @@ b4
         if (propertyLookup.TryGetValue(item.Name, out IPropertyMetadata property)
             && property.Scaffold && !property.IsForeignKey && !property.IsPrimaryKey)
         {
-        <dt class = "col-sm-2">
+        <dt>
             @@Html.DisplayNameFor(model => model.@GetValueExpression(property))
         </dt>
-        <dd class = "col-sm-10">
+        <dd>
             @@Html.DisplayFor(model => model.@GetValueExpression(property))
         </dd>
         }
         else if (navigationLookup.TryGetValue(item.Name, out INavigationMetadata navigation))
         {
-        <dt class = "col-sm-2">
+        <dt>
             @@Html.DisplayNameFor(model => model.@GetValueExpression(navigation))
         </dt>
-        <dd class = "col-sm-10">
+        <dd>
             @@Html.DisplayFor(model => model.@GetValueExpression(navigation).@navigation.DisplayPropertyName)
         </dd>
         }
     }
 }    </dl>
+
+
+<div class="form-group text-right">
+    @{
+        string pkName = GetPrimaryKeyName();
+        if (pkName != null)
+        {
+        @:<a asp-action="Edit" asp-route-id="@@Model.@pkName" class="k-button k-primary" style="margin-right:10px;"><span class="k-icon k-i-edit"></span>&nbsp;Edit</a>
+        @:<a asp-action="Index" class="k-button"><span class="k-icon k-i-grid"></span>&nbsp;Back to Grid</a>
+        }
+        else
+        {
+        @:@@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+        @:<a asp-action="Index" class="k-button">Back to List</a>
+        }
+    }
 </div>
-<div>
-@{
-    string pkName = GetPrimaryKeyName();
-    if (pkName != null)
-    {
-    @:<a asp-action="Edit" asp-route-id="@@Model.@pkName" class="k-button k-primary">Edit</a> |
-    @:<a asp-action="Index" class="k-button">Back to List</a>
-    }
-    else
-    {
-    @:@@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    @:<a asp-action="Index" class="k-button">Back to List</a>
-    }
-}</div>
+</div>
+</div>
+</div>
 @{
     if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
     {

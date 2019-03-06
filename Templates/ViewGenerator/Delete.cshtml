@@ -43,7 +43,9 @@
 <div>
     <h4>@Model.ViewDataTypeShortName</h4>
     <hr />
-    <dl class="row">
+    <div class="row">
+    <div class="col-md-6">
+    <dl>
 @{
     Dictionary<string, IPropertyMetadata> propertyLookup = ((IModelMetadata)Model.ModelMetadata).Properties.ToDictionary(x => x.PropertyName, x => x);
     Dictionary<string, INavigationMetadata> navigationLookup = ((IModelMetadata)Model.ModelMetadata).Navigations.ToDictionary(x => x.AssociationPropertyName, x => x);
@@ -53,23 +55,24 @@
         if (propertyLookup.TryGetValue(item.Name, out IPropertyMetadata property)
             && property.Scaffold && !property.IsForeignKey && !property.IsPrimaryKey)
         {
-        <dt class = "col-sm-2">
+        <dt>
             @@Html.DisplayNameFor(model => model.@GetValueExpression(property))
         </dt>
-        <dd class = "col-sm-10">
+        <dd>
             @@Html.DisplayFor(model => model.@GetValueExpression(property))
         </dd>
         }
         else if (navigationLookup.TryGetValue(item.Name, out INavigationMetadata navigation))
         {
-        <dt class = "col-sm-2">
+        <dt>
             @@Html.DisplayNameFor(model => model.@GetValueExpression(navigation))
         </dt>
-        <dd class = "col-sm-10">
+        <dd>
             @@Html.DisplayFor(model => model.@GetValueExpression(navigation).@navigation.DisplayPropertyName)
-        </dd class>
+        </dd>
         }
     }
+
     @:</dl>
     @:
     @:<form asp-action="@Model.ViewName">
@@ -79,9 +82,13 @@
         @:<input type="hidden" asp-for="@GetValueExpression(property)" />
             }
         }
-        @:<input type="submit" value="Delete" class="k-button k-primary" /> |
-        @:<a asp-action="Index" class="k-button">Back to List</a>
+    @: <div class="form-group text-right">
+        @:<kendo-button type="button" name="confirmDelete" icon="delete" class="k-button k-error-colored" style="margin-right:10px">&nbsp;Delete</kendo-button>
+        @:<a asp-action="Index" class="k-button"><span class="k-icon k-i-cancel"></span>&nbsp;Cancel</a>
+    @: </div>
     @:</form>
+@:</div>
+@:</div>
 @:</div>
     if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
     {
