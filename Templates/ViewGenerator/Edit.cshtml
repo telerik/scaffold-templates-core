@@ -10,46 +10,46 @@
     }
     else if (Model.IsLayoutPageSelected)
     {
-@:@@{
+    @:@@{
     @:ViewData["Title"] = "@Model.ViewName";
         if (!string.IsNullOrEmpty(Model.LayoutPageFile))
         {
     @:Layout = "@Model.LayoutPageFile";
         }
-@:}
-@:
-@:<h1>@Model.ViewName</h1>
-@:
+    @:}
+    @:
+    @:<h1>@Model.ViewName</h1>
+    @:
     }
     else
     {
-@:@@{
+    @:@@{
     @:Layout = null;
-@:}
-@:
-@:<!DOCTYPE html>
-@:
-@:<html>
-@:<head>
-    @:<meta name="viewport" content="width=device-width" />
-    @:<title>@Model.ViewName</title>
-    @:</head>
-@:<body>
+    @:}
     @:
+    @:<!DOCTYPE html>
+    @:
+    @:<html>
+    @:<head>
+        @:<meta name="viewport" content="width=device-width" />
+        @:<title>@Model.ViewName</title>
+    @:</head>
+    @:<body>
+        @:
     //    PushIndent("    ");
     }
-    @:<h4>@Model.ViewDataTypeShortName</h4>
-    @:<hr />
-    @:<div class="row">
-        @:<div class="col-md-4">
+        @:<h4>@Model.ViewDataTypeShortName</h4>
+        @:<hr />
+        @:<div class="row">
+            @:<div class="col-md-6">
             string formId = Model.ViewDataTypeShortName + "Form";
-            @:<form asp-action="@Model.ViewName" id="@formId">
-                @:<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                @:<form asp-action="@Model.ViewName" id="@formId">
+                    @:<div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 foreach (PropertyMetadata property in Model.ModelMetadata.Properties)
                 {
                 if (property.IsPrimaryKey)
                 {
-                @:<input type="hidden" asp-for="@property.PropertyName" />
+                    @:<input type="hidden" asp-for="@property.PropertyName" />
                 continue;
                 }
 
@@ -62,86 +62,83 @@
 
                 if (property.IsForeignKey)
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName" class="control-label"></label>
-                    @:<select asp-for="@property.PropertyName" class="form-control" asp-items="ViewBag.@property.PropertyName"></select>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
-                    @:
-                @:</div>
+                    @:<div class="form-group">
+                        @:<label asp-for="@property.PropertyName" class="control-label"></label>
+                        @:<select asp-for="@property.PropertyName" class="form-control" asp-items="ViewBag.@property.PropertyName"></select>
+                        @:<span asp-validation-for="@property.PropertyName" class="text-danger"></span>
+                        @:
+                    @:</div>
                 continue;
                 }
 
-                bool isCheckbox = property.TypeName.Equals("System.Boolean");
-                bool isDatetime = property.TypeName.Contains("System.DateTime");
-                if (isCheckbox)
+                if (IsCheckbox(property))
                 {
-                @:<div class="form-group">
-                    @:@@Html.Kendo().CheckBoxFor(m => m.@property.PropertyName)
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+                    @:<div class="form-group">
+                        @:@@Html.Kendo().CheckBoxFor(m => m.@property.PropertyName)
+                        @:<label asp-for="@property.PropertyName"></label>
+                        @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
+                    @:</div>
                 }
-                else if (isDatetime)
+                else if (IsDate(property))
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<kendo-datetimepicker for="@property.PropertyName" />
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                 @:</div>
+                    @:<div class="form-group">
+                        @:<label asp-for="@property.PropertyName"></label>
+                        @:<kendo-datetimepicker for="@property.PropertyName" style="width:100%"/>
+                        @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
+                    @:</div>
                 }
                 else if (IsNumericType(property))
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<kendo-numerictextbox for="@property.PropertyName" />
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+                    @:<div class="form-group">
+                        @:<label asp-for="@property.PropertyName"></label>
+                        @:<kendo-numerictextbox for="@property.PropertyName" style="width:100%"/>
+                        @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
+                    @:</div>
                 }
-                else if (property.IsEnum && !property.IsEnumFlags)
+                else if (IsSelect(property))
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<select asp-for="@property.PropertyName"></select>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+                    @:<div class="form-group">
+                        @:<label asp-for="@property.PropertyName"></label>
+                        @:<select asp-for="@property.PropertyName"></select>
+                        @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
+                    @:</div>
                 }
                 else if (property.IsMultilineText)
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<textarea asp-for="@property.PropertyName" class="k-textbox"></textarea>
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+                    @:<div class="form-group">
+                        @:<label asp-for="@property.PropertyName"></label>
+                        @:<textarea asp-for="@property.PropertyName" class="k-textbox"></textarea>
+                        @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
+                    @:</div>
                 }
                 else
                 {
-                @:<div class="form-group">
-                    @:<label asp-for="@property.PropertyName"></label>
-                    @:<input asp-for="@property.PropertyName" class="k-textbox" />
-                    @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
-                @:</div>
+                    @:<div class="form-group">
+                        @:<label asp-for="@property.PropertyName"></label>
+                        @:<input asp-for="@property.PropertyName" class="k-textbox" />
+                        @:<span asp-validation-for="@property.PropertyName" class="text-danger k-invalid-msg" data-for="@property.PropertyName"></span>
+                    @:</div>
                 }
                 }
                 // Ideally we shouldn't be here  but if the user marks the foreign key as [ScaffoldColumn(false)], we want to atleast try to make it work.
                 else if (property.IsForeignKey)
                 {
-                @:<input type="hidden" asp-for="@property.PropertyName" />
+                    @:<input type="hidden" asp-for="@property.PropertyName" />
                 continue;
                 }
                 }
-                }
-                <div class="form-group">
-                    <input type="submit" value="Save" class="k-button k-primary" />
-                </div>
-            </form>
-        </div>
-    </div>
+}
+<div class="form-group text-right">
+    <a asp-action="Index" class="k-button" style="margin-right:10px"><span class="k-icon k-i-cancel"></span>&nbsp;Cancel</a>
+    <kendo-button type="submit" name="confirmEdit" icon="check" class="k-primary">Save</kendo-button>
+</div>
+</form>
 
-    <div>
-        <a asp-action="Index" class="k-button">Back to List</a>
-    </div>
+</div>
 
-    @{
+</div>
+
+@{
     if (Model.ReferenceScriptLibraries)
     {
     @:<script>
@@ -156,22 +153,23 @@
     // The following code closes the tag used in the case of a view using a layout page and the body and html tags in the case of a regular view page
     if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
     {
-    @:</body>
+@:</body>
 @:</html>
     }
 }
 @functions
 {
-    string GetAssociationName(IPropertyMetadata property)
-    {
-        //Todo: Implement properly.
-        return property.PropertyName;
-    }
 
-    string GetValueExpression(IPropertyMetadata property)
-    {
-        return property.PropertyName;
-    }
+    string GetPrimaryKeyName() =>
+        (Model.ModelMetadata.PrimaryKeys != null && Model.ModelMetadata.PrimaryKeys.Length == 1)
+        ? Model.ModelMetadata.PrimaryKeys[0].PropertyName
+        : null;
+
+    string GetValueExpression(IPropertyMetadata property) => property.PropertyName;
+
+    string GetValueExpression(INavigationMetadata navigation) => navigation.AssociationPropertyName;
+
+    string GetEnumerableTypeExpression(string typeName) => "IEnumerable<" + typeName + ">";
 
     bool IsNumericType(IPropertyMetadata property)
         {
@@ -191,4 +189,9 @@
 
             return types.Any(property.TypeName.Contains);
         }
+
+    bool IsCheckbox(IPropertyMetadata p) => p.TypeName.Contains("System.Boolean");
+    bool IsSelect(IPropertyMetadata p) => p.IsEnum && !p.IsEnumFlags;
+    bool IsDate(IPropertyMetadata p) => p.TypeName.Contains("System.DateTime");
+
 }
