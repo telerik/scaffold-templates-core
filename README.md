@@ -23,6 +23,8 @@ In order to install the scaffold templates from this repository just copy the **
 
 ![adding templates](https://github.com/telerik/scaffold-templates-core/wiki/2018-11-19_0849.png)
 
+> As of .NET Core 2.2, when using Bootstrap 3, the views folder used is `ViewGenerator_Versioned`. If you are upgrading your project make sure to update the folder's name.
+
 Make sure to exclude the folder from the project so that those files are not compiled. Or you can add the exclude statement manually in the *.csproj* file:
 
 ```xml
