@@ -116,16 +116,16 @@ foreach (var property in Model.GetType().GetProperties())
     }
 @: <script>
 @:     function tbCreate(data) {
-@:         return `<a id='tbCreate' href='${location.pathname}/create' class='k-button'>Create</a>`;
+@:         return "<a id='tbCreate' href='"+location.pathname+"/create' class='k-button'>Create</a>";
 @:     };
 @:     function tbDetails(data) {
-@:         return `<a id='tbDetails'>Details</a>`;
+@:         return "<a id='tbDetails'>Details</a>";
 @:     };
 @:     function tbEdit(data) {
-@:         return `<a id='tbEdit'>Edit</a>`;
+@:         return "<a id='tbEdit'>Edit</a>";
 @:     };
 @:     function tbDelete(data) {
-@:         return `<a id='tbDelete'>Delete</a>`;
+@:         return "<a id='tbDelete'>Delete</a>";
 @:     };
 @:     function handleChange(args) {
 @:         let enabled = this.select().length != 0;
@@ -134,9 +134,9 @@ foreach (var property in Model.GetType().GetProperties())
 @:         toolBar.del.enable(enabled);
 @:         if (enabled) {
 @:              let selectedId = this.dataItem(this.select()).OrderID;
-@:              toolBar.edit.wrapper.attr("href", `${location.pathname}/edit/${selectedId}`);
-@:              toolBar.details.wrapper.attr("href", `${location.pathname}/details/${selectedId}`);
-@:              toolBar.del.wrapper.attr("href", `${location.pathname}/delete/${selectedId}`);
+@:              toolBar.edit.wrapper.attr("href", location.pathname+"/edit/"+selectedId);
+@:              toolBar.details.wrapper.attr("href", location.pathname+"/details/"+selectedId);
+@:              toolBar.del.wrapper.attr("href", location.pathname+"/delete/"+selectedId);
 @:          } else {
 @:              toolBar.edit.wrapper.attr("href", "#");
 @:              toolBar.details.wrapper.attr("href", "#");
