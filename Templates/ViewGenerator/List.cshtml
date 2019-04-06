@@ -133,7 +133,7 @@ foreach (var property in Model.GetType().GetProperties())
 @:         toolBar.details.enable(enabled);
 @:         toolBar.del.enable(enabled);
 @:         if (enabled) {
-@:              let selectedId = this.dataItem(this.select()).OrderID;
+@:              let selectedId = this.dataItem(this.select()).@GetPrimaryKeyName() ;
 @:              toolBar.edit.wrapper.attr("href", `${location.pathname}/edit/${selectedId}`);
 @:              toolBar.details.wrapper.attr("href", `${location.pathname}/details/${selectedId}`);
 @:              toolBar.del.wrapper.attr("href", `${location.pathname}/delete/${selectedId}`);
