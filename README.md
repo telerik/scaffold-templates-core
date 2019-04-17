@@ -42,4 +42,7 @@ Next, using the build-in scaffolding utility will output cshtml generated using 
 * `String`(multiline): `textarea` element with Kendo styles;
 * `Number`: `kendo-numerictextbox` tag helper;
 * `DateTime`: `kendo-datetimepicker` tag helper;
-* `Boolean`: `Html.Kendo().CheckBoxFor` helper.
+* `Boolean`: `Html.Kendo().CheckBoxFor` helper;
+
+> [ViewGenerator/List.cshtml](https://github.com/telerik/scaffold-templates-core/blob/master/Templates/ViewGenerator/List.cshtml#L207) template, which scaffolds `kendo-grid` tag helper, requires Entity Framework data context to scaffold successfully. If there is no Entity, the following error will be thrown on scaffolding:
+> `"Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore.CodeModel does not contain a definition for EntitySetName"`
