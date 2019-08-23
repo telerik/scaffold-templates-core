@@ -9,8 +9,8 @@
 @: Model.ViewName: @Model.ViewName
 @: Model.ViewDataTypeShortName: @Model.ViewDataTypeShortName
 @: Model.ViewDataTypeName: @Model.ViewDataTypeName
-@: Model.ModelMetadata.EntitySetName: @Model.ModelMetadata.EntitySetName 
-@: ControllerName: @ControllerName() 
+@: Model.ModelMetadata.EntitySetName: @Model.ModelMetadata.EntitySetName
+@: ControllerName: @ControllerName()
 @: Model.IsPartialView: @Model.IsPartialView
 @: Model.IsPartialView: @Model.IsPartialView
 @: Model.IsPartialView: @Model.IsPartialView
@@ -133,7 +133,7 @@ foreach (var property in Model.GetType().GetProperties())
 @:         toolBar.details.enable(enabled);
 @:         toolBar.del.enable(enabled);
 @:         if (enabled) {
-@:              let selectedId = this.dataItem(this.select()).OrderID;
+@:              let selectedId = this.dataItem(this.select()).@(GetPrimaryKeyName());
 @:              toolBar.edit.wrapper.attr("href", `${location.pathname}/edit/${selectedId}`);
 @:              toolBar.details.wrapper.attr("href", `${location.pathname}/details/${selectedId}`);
 @:              toolBar.del.wrapper.attr("href", `${location.pathname}/delete/${selectedId}`);
@@ -170,9 +170,9 @@ if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
         : null;
 
     string GetValueExpression(IPropertyMetadata property) => property.PropertyName;
-    
+
     string GetValueExpression(INavigationMetadata navigation) => navigation.AssociationPropertyName;
-    
+
     string GetEnumerableTypeExpression(string typeName) => "IEnumerable<" + typeName + ">";
 
     bool IsNumericType(IPropertyMetadata property)
