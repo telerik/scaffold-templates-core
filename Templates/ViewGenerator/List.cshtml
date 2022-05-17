@@ -99,7 +99,7 @@ foreach (var property in Model.GetType().GetProperties())
                         }
                         else if (navigationLookup.TryGetValue(item.Name, out INavigationMetadata navigation))
                         {
-                 @: <field name="@GetValueExpression(navigation)" title="@GetFieldDataType(property)" />
+                 @: <field name="@GetValueExpression(navigation)" type="@GetFieldDataType(property)" />
                         }
                     }
     @:            </fields>
@@ -199,6 +199,7 @@ if (!Model.IsPartialView && !Model.IsLayoutPageSelected)
     bool IsDate(IPropertyMetadata p) => p.TypeName.Contains("System.DateTime");
 
     string GetFieldDataType(IPropertyMetadata property) =>
+        property == null ? "object" :
         IsNumericType(property) ? "number" :
         IsDate(property) ? "date" :
         "string";
